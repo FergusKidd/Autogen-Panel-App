@@ -49,3 +49,27 @@ def generate_and_save_images(query: str, image_size: str = "1024x1024") -> List[
         file.write(response.content)
 
     return "IMAGE GENERATED: " + image_path
+
+def get_cat_fact() -> str:
+    """
+    Fetches a single cat fact from the Cat Facts API.
+    
+    Returns:
+        str: A random cat fact.
+    """
+    url = 'https://catfact.ninja/facts'
+    params = {
+        'limit': 1,
+        'max_length': 140
+    }
+    headers = {
+        'Accept': 'application/json'
+    }
+
+    try:
+        response = requests.get(url, params=params, headers=headers)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        data = response.json()
+        return data['data'][0]['fact']
+    except requests.RequestException as e:
+        return f"Error fetching cat fact: {str(e)}"

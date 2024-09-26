@@ -16,7 +16,7 @@ import requests
 import sys
 sys.path.append('..')
 
-from skills import generate_and_save_images, current_time
+from skills import generate_and_save_images, current_time, get_cat_fact
 import panel as pn 
 
 pn.extension(design="material")
@@ -101,6 +101,13 @@ clock_bot = autogen.ConversableAgent(
     human_input_mode="NEVER"
 )
 
+cat_fact_bot = autogen.ConversableAgent(
+    name="cat_fact_bot",
+    description="a bot that tells a cat fact",
+    llm_config=llm_config,
+    human_input_mode="NEVER"
+)
+
 #endregion
 
 #region desc = " Register the tool signature with the assistant agent."
@@ -115,10 +122,15 @@ clock_bot.register_for_llm(
 )(current_time)
 function_executor_agent.register_for_execution(name="current_time")(current_time)
 
+cat_fact_bot.register_for_llm(
+    name="get_cat_fact", description="returns a cat fact"
+)(get_cat_fact)
+function_executor_agent.register_for_execution(name="get_cat_fact")(get_cat_fact)
+
 #endregion
 # Group Chat Setup
 groupchat = autogen.GroupChat(
-    agents=[user_proxy_agent,function_executor_agent, assistant_agent, image_generator, clock_bot],
+    agents=[user_proxy_agent,function_executor_agent, assistant_agent, image_generator, clock_bot, cat_fact_bot],
     messages=[],
     speaker_selection_method="auto",
     max_round=50
@@ -129,7 +141,7 @@ manager = autogen.GroupChatManager(
 )
 
 
-avatar = {user_proxy_agent.name:"👤", assistant_agent.name:"🤖", function_executor_agent.name:"👨‍💻", image_generator.name:"🖼️", clock_bot.name:"🕒" }
+avatar = {user_proxy_agent.name:"👤", assistant_agent.name:"🤖", function_executor_agent.name:"👨‍💻", image_generator.name:"🖼️", clock_bot.name:"🕒", cat_fact_bot.name:"🐱" }
 
 def print_messages(recipient, messages, sender, config):
 
