@@ -36,8 +36,8 @@ Create a file named `OAI_CONFIG_LIST` in the root directory of the project. This
         "api_key": "<your Azure OpenAI API key here>",
         "base_url": "<your Azure OpenAI API base URL>",
         "api_type": "azure",
-"api_version": "<your Azure OpenAI API version here>"
-}
+        "api_version": "<your Azure OpenAI API version here>"
+    }
 ]
 ```
 
