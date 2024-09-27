@@ -12,6 +12,14 @@ Clone this repository to your local machine.
 
 It's recommended to use a virtual environment to manage dependencies. Here's how to set it up:
 
+### 3. Install Requirements
+
+Install the required packages using pip:
+
+```bash
+pip install -r requirements.txt
+```
+
 
 ### 4. Configure OAI_CONFIG_LIST
 
@@ -19,15 +27,15 @@ Create a file named `OAI_CONFIG_LIST` in the root directory of the project. This
 
 ```json
 [
-{
-"model": "gpt-4",
-"api_key": "<your OpenAI API key here>"
-},
-{
-"model": "<your Azure OpenAI deployment name>",
-"api_key": "<your Azure OpenAI API key here>",
-"base_url": "<your Azure OpenAI API base URL>",
-"api_type": "azure",
+    {
+        "model": "gpt-4",
+        "api_key": "<your OpenAI API key here>"
+    },
+    {
+        "model": "<your Azure OpenAI deployment name>",
+        "api_key": "<your Azure OpenAI API key here>",
+        "base_url": "<your Azure OpenAI API base URL>",
+        "api_type": "azure",
 "api_version": "<your Azure OpenAI API version here>"
 }
 ]
