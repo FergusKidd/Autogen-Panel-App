@@ -57,7 +57,7 @@ def get_cat_fact() -> str:
     Returns:
         str: A random cat fact.
     """
-    url = 'https://catfact.ninja/facts'
+    url = 'https://catfact.ninja/fact'
     params = {
         'limit': 1,
         'max_length': 140
@@ -70,6 +70,7 @@ def get_cat_fact() -> str:
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()  # Raise an exception for bad status codes
         data = response.json()
-        return data['data'][0]['fact']
+        return data['fact']
     except requests.RequestException as e:
         return f"Error fetching cat fact: {str(e)}"
+    
