@@ -74,3 +74,8 @@ def get_cat_fact() -> str:
     except requests.RequestException as e:
         return f"Error fetching cat fact: {str(e)}"
     
+def get_exchange_rate(base_currency: str) -> float:
+    response = requests.get(f'https://api.frankfurter.dev/v1/latest?base={base_currency}')
+    data = response.json()
+    return data
+

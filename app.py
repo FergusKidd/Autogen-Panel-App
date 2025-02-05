@@ -16,7 +16,7 @@ import requests
 import sys
 sys.path.append('..')
 
-from skills import generate_and_save_images, current_time, get_cat_fact
+from skills import generate_and_save_images, current_time, get_cat_fact, get_exchange_rate
 import panel as pn 
 
 pn.extension(design="material")
@@ -108,6 +108,13 @@ cat_fact_bot = autogen.ConversableAgent(
     human_input_mode="NEVER"
 )
 
+exchange_rate_bot = autogen.ConversableAgent(
+    name="exchange_rate_bot",
+    description="a bot that tells the exchange rate of a currency",
+    llm_config=llm_config,
+    human_input_mode="NEVER"
+)
+
 #endregion
 
 #region desc = " Register the tool signature with the assistant agent."
@@ -127,10 +134,15 @@ cat_fact_bot.register_for_llm(
 )(get_cat_fact)
 function_executor_agent.register_for_execution(name="get_cat_fact")(get_cat_fact)
 
+exchange_rate_bot.register_for_llm(
+    name="get_exchange_rate", description="returns the exchange rate of a currency"
+)(get_exchange_rate)
+function_executor_agent.register_for_execution(name="get_exchange_rate")(get_exchange_rate)
+
 #endregion
 # Group Chat Setup
 groupchat = autogen.GroupChat(
-    agents=[user_proxy_agent,function_executor_agent, assistant_agent, image_generator, clock_bot, cat_fact_bot],
+    agents=[user_proxy_agent,function_executor_agent, assistant_agent, image_generator, clock_bot, cat_fact_bot, exchange_rate_bot],
     messages=[],
     speaker_selection_method="auto",
     max_round=50
@@ -141,7 +153,7 @@ manager = autogen.GroupChatManager(
 )
 
 
-avatar = {user_proxy_agent.name:"👤", assistant_agent.name:"🤖", function_executor_agent.name:"👨‍💻", image_generator.name:"🖼️", clock_bot.name:"🕒", cat_fact_bot.name:"🐱" }
+avatar = {user_proxy_agent.name:"👤", assistant_agent.name:"🤖", function_executor_agent.name:"👨‍💻", image_generator.name:"🖼️", clock_bot.name:"🕒", cat_fact_bot.name:"🐱", exchange_rate_bot.name:"💱" }
 
 def print_messages(recipient, messages, sender, config):
 
