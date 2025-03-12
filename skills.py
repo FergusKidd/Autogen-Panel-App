@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+from bs4 import BeautifulSoup
 
 from openai import AzureOpenAI
 from typing import List
@@ -78,4 +79,39 @@ def get_exchange_rate(base_currency: str) -> float:
     response = requests.get(f'https://api.frankfurter.dev/v1/latest?base={base_currency}')
     data = response.json()
     return data
+
+def scrape_website(url: str) -> str:
+    """
+    Scrapes the main content from a given website URL.
+    
+    Args:
+        url (str): The URL of the website to scrape
+        
+    Returns:
+        str: The scraped content or error message
+    """
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Remove script and style elements
+        for script in soup(["script", "style"]):
+            script.decompose()
+            
+        # Get text content
+        text = soup.get_text(separator='\n', strip=True)
+        
+        # Clean up text
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        text = '\n'.join(lines)
+        
+        return f"Successfully scraped content from {url}:\n\n{text[:2000]}..." if len(text) > 2000 else text
+        
+    except Exception as e:
+        return f"Error scraping website: {str(e)}"
 

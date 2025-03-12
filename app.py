@@ -16,7 +16,7 @@ import requests
 import sys
 sys.path.append('..')
 
-from skills import generate_and_save_images, current_time, get_cat_fact, get_exchange_rate
+from skills import generate_and_save_images, current_time, get_cat_fact, get_exchange_rate, scrape_website
 import panel as pn 
 
 pn.extension(design="material")
@@ -115,6 +115,13 @@ exchange_rate_bot = autogen.ConversableAgent(
     human_input_mode="NEVER"
 )
 
+web_scraper_bot = autogen.ConversableAgent(
+    name="web_scraper_bot",
+    description="a bot that scrapes content from websites",
+    llm_config=llm_config,
+    human_input_mode="NEVER"
+)
+
 #endregion
 
 #region desc = " Register the tool signature with the assistant agent."
@@ -139,10 +146,15 @@ exchange_rate_bot.register_for_llm(
 )(get_exchange_rate)
 function_executor_agent.register_for_execution(name="get_exchange_rate")(get_exchange_rate)
 
+web_scraper_bot.register_for_llm(
+    name="scrape_website", description="scrapes content from a given website URL"
+)(scrape_website)
+function_executor_agent.register_for_execution(name="scrape_website")(scrape_website)
+
 #endregion
 # Group Chat Setup
 groupchat = autogen.GroupChat(
-    agents=[user_proxy_agent,function_executor_agent, assistant_agent, image_generator, clock_bot, cat_fact_bot, exchange_rate_bot],
+    agents=[user_proxy_agent, function_executor_agent, assistant_agent, image_generator, clock_bot, cat_fact_bot, exchange_rate_bot, web_scraper_bot],
     messages=[],
     speaker_selection_method="auto",
     max_round=50
@@ -153,7 +165,16 @@ manager = autogen.GroupChatManager(
 )
 
 
-avatar = {user_proxy_agent.name:"👤", assistant_agent.name:"🤖", function_executor_agent.name:"👨‍💻", image_generator.name:"🖼️", clock_bot.name:"🕒", cat_fact_bot.name:"🐱", exchange_rate_bot.name:"💱" }
+avatar = {
+    user_proxy_agent.name:"👤", 
+    assistant_agent.name:"🤖", 
+    function_executor_agent.name:"👨‍💻", 
+    image_generator.name:"🖼️", 
+    clock_bot.name:"🕒", 
+    cat_fact_bot.name:"🐱", 
+    exchange_rate_bot.name:"💱",
+    web_scraper_bot.name:"🕷️"
+}
 
 def print_messages(recipient, messages, sender, config):
 
